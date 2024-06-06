@@ -3,6 +3,7 @@ import hmac
 import hashlib
 import rsa
 import ecdsa
+from tqdm import tqdm  # tqdm 라이브러리 임포트
 
 # Define constants
 MESSAGE = b'Measuring the speed difference between different encryption types'  # 메시지 데이터
@@ -16,14 +17,14 @@ def hmac_test():
 
     # 서명 생성 시간 측정
     start_time = time.time()  # 시작 시간 기록
-    for _ in range(ITERATIONS):
+    for _ in tqdm(range(ITERATIONS), desc="HMAC Signing"):  # tqdm 적용
         h.update(MESSAGE)  # 메시지 업데이트
         signature = h.digest()  # 서명 생성
     signing_time = (time.time() - start_time) / ITERATIONS  # 평균 서명 생성 시간 계산
 
     # 서명 검증 시간 측정
     start_time = time.time()  # 시작 시간 기록
-    for _ in range(ITERATIONS):
+    for _ in tqdm(range(ITERATIONS), desc="HMAC Verification"):  # tqdm 적용
         h = hmac.new(key, MESSAGE, hashlib.sha512)  # 새로운 HMAC 객체 생성
         hmac.compare_digest(h.digest(), signature)  # 서명 검증
     verification_time = (time.time() - start_time) / ITERATIONS  # 평균 서명 검증 시간 계산
@@ -36,13 +37,13 @@ def rsa_test():
 
     # 서명 생성 시간 측정
     start_time = time.time()  # 시작 시간 기록
-    for _ in range(ITERATIONS):
+    for _ in tqdm(range(ITERATIONS), desc="RSA Signing"):  # tqdm 적용
         signature = rsa.sign(MESSAGE, priv_key, 'SHA-512')  # 메시지 서명 생성
     signing_time = (time.time() - start_time) / ITERATIONS  # 평균 서명 생성 시간 계산
 
     # 서명 검증 시간 측정
     start_time = time.time()  # 시작 시간 기록
-    for _ in range(ITERATIONS):
+    for _ in tqdm(range(ITERATIONS), desc="RSA Verification"):  # tqdm 적용
         rsa.verify(MESSAGE, signature, pub_key)  # 서명 검증
     verification_time = (time.time() - start_time) / ITERATIONS  # 평균 서명 검증 시간 계산
 
@@ -55,13 +56,13 @@ def ecdsa_test():
 
     # 서명 생성 시간 측정
     start_time = time.time()  # 시작 시간 기록
-    for _ in range(ITERATIONS):
+    for _ in tqdm(range(ITERATIONS), desc="ECDSA Signing"):  # tqdm 적용
         signature = sk.sign(MESSAGE, hashfunc=hashlib.sha512)  # 메시지 서명 생성
     signing_time = (time.time() - start_time) / ITERATIONS  # 평균 서명 생성 시간 계산
 
     # 서명 검증 시간 측정
     start_time = time.time()  # 시작 시간 기록
-    for _ in range(ITERATIONS):
+    for _ in tqdm(range(ITERATIONS), desc="ECDSA Verification"):  # tqdm 적용
         vk.verify(signature, MESSAGE, hashfunc=hashlib.sha512)  # 서명 검증
     verification_time = (time.time() - start_time) / ITERATIONS  # 평균 서명 검증 시간 계산
 
